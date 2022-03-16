@@ -8,14 +8,25 @@ const rl = readline.createInterface({
 const url = process.argv[2];
 const path = process.argv[3];
 
+const requestURL = () => {
+  request(url, (error, response, body) => {
+
+    if (error) {
+      console.log("Not a valid URL. Exiting program....");
+      rl.close();
+      return;
+    }
+
+    writeToFile(body, printCompletionMessage, path);
+  });
+}
 
 const checkExist = (path) => {
 
   try {
-    if (fs.existsSync(path)) { 
+    if (fs.existsSync(path)) {
 
       // when path is a valid and exists
-
       rl.question(`${path} already exists. Would you like to override its contents? (y/n) `, (answer) => {
         if (answer.toLowerCase() === 'n' || answer.toLowerCase() === "no") {
           console.log("Will NOT override existing file. Exiting program...");
@@ -24,19 +35,7 @@ const checkExist = (path) => {
         }
 
         if (answer.toLowerCase() === 'y' || answer.toLowerCase() === "yes") {
-
-          request(url, (error, response, body) => {
-
-            if (error) {
-              console.log("Not a valid URL. Exiting program....");
-              rl.close();
-              return;
-            }
-
-            writeToFile(body, printCompletionMessage, path);
-
-          });
-
+          requestURL();
           return;
         }
 
@@ -44,21 +43,14 @@ const checkExist = (path) => {
         rl.close();
         return;
       });
-    } else {
-      
-      request(url, (error, response, body) => {
-        
-        if (error) {
-          console.log("Not a valid URL. Exiting program....");
-          rl.close();
-          return;
-        }
 
-        writeToFile(body, printCompletionMessage, path);
-
-      });
       return;
+
     }
+
+    // when path is valid and does not exist
+    requestURL();
+    return;
 
   } catch (error) {
     console.log("File does not exist. Exiting program...");
