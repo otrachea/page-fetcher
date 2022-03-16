@@ -12,7 +12,9 @@ const path = process.argv[3];
 const checkExist = (path) => {
 
   try {
-    if (fs.existsSync(path)) {
+    if (fs.existsSync(path)) { 
+
+      // when path is a valid and exists
 
       rl.question(`${path} already exists. Would you like to override its contents? (y/n) `, (answer) => {
         if (answer.toLowerCase() === 'n' || answer.toLowerCase() === "no") {
@@ -43,8 +45,18 @@ const checkExist = (path) => {
         return;
       });
     } else {
-      console.log("File path is invalid. Exiting program...");
-      rl.close();
+      
+      request(url, (error, response, body) => {
+        
+        if (error) {
+          console.log("Not a valid URL. Exiting program....");
+          rl.close();
+          return;
+        }
+
+        writeToFile(body, printCompletionMessage, path);
+
+      });
       return;
     }
 
