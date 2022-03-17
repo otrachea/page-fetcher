@@ -23,40 +23,50 @@ const requestURL = () => {
 
 const checkExist = (path) => {
 
-  try {
-    if (fs.existsSync(path)) {
+  if (fs.existsSync(path)) {
 
-      // when path is a valid and exists
-      rl.question(`${path} already exists. Would you like to override its contents? (y/n) `, (answer) => {
-        if (answer.toLowerCase() === 'n' || answer.toLowerCase() === "no") {
-          console.log("Will NOT override existing file. Exiting program...");
-          rl.close();
-          return;
-        }
-
-        if (answer.toLowerCase() === 'y' || answer.toLowerCase() === "yes") {
-          requestURL();
-          return;
-        }
-
-        console.log(`${answer} is not a valid response. Exiting program...`);
-        rl.close();
-        return;
-      });
-
+    // when path is valid but is not a file
+    if (!(fs.lstatSync(path).isFile())) {
+      console.log("Invalid file name. Exiting program...");
+      rl.close();
       return;
-
     }
 
-    // when path is valid and does not exist
+    // when path is a valid and exists
+    rl.question(`${path} already exists. Would you like to override its contents? (y/n) `, (answer) => {
+      if (answer.toLowerCase() === 'n' || answer.toLowerCase() === "no") {
+        console.log("Will NOT override existing file. Exiting program...");
+        rl.close();
+        return;
+      }
+
+      if (answer.toLowerCase() === 'y' || answer.toLowerCase() === "yes") {
+        requestURL();
+        return;
+      }
+
+      console.log(`${answer} is not a valid response. Exiting program...`);
+      rl.close();
+      return;
+    });
+
+    return;
+
+  } else {
+    // for when the path is not an existing file
+
+    // if path is nested files, checks if path of files is valid
+    if (!(fs.existsSync(path.split("/").slice(0, -1).join("/").concat("/")))) {
+        console.log("Invalid file name. Exiting program...");
+        rl.close();
+        return;
+    }
+
     requestURL();
     return;
 
-  } catch (error) {
-    console.log("File does not exist. Exiting program...");
-    rl.close();
-    return;
   }
+
 
 }
 
