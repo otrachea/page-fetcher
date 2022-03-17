@@ -52,7 +52,7 @@ const checkExist = (path) => {
 
     return;
 
-  } else {
+  }
     // for when the path is not an existing file
 
     // if path is nested files, checks if path of files is valid
@@ -65,7 +65,7 @@ const checkExist = (path) => {
     requestURL();
     return;
 
-  }
+  
 
 
 }
